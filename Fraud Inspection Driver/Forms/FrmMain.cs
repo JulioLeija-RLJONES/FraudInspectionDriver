@@ -148,14 +148,55 @@ namespace RLJones.FraudInspectionDriver.Forms
             }
             else // SN is already inspected, show message and do nothing
             {
-                string msg = string.Format(
-                    "SN {0} inspected on {1}: {2}",
-                    fraudTracker.SerialNumber, fraudTracker.Date.ToShortDateString(), fraudTracker.PSUTest
-                    );
 
-                LblStatus.Text = msg;
+
+                //string msg = string.Format(
+                //    "SN {0} inspected on {1}: {2}",
+                //    fraudTracker.SerialNumber, fraudTracker.Date.ToShortDateString(), fraudTracker.PSUTest
+                //    );
+                //LblStatus.Text = msg;
+                //FraudInspectionDone = true;
+                // check if part number is a target for fraud inspection
+                var target = Db.GetInspectionTarget(PartNumber);
+
+                if (target != null)
+                {
+                    // it is a target, do fraud inspection now!
+                    Tools.FlexLinkChrome.Minimize();
+                    LblStatus.Text = "Looper Unit. Performing fraud inspection, SN='" + SerialNumber + "'";
+
+                    FrmFraudInspection fraudInspection
+                        = new FrmFraudInspection(SerialNumber);
+
+                    fraudInspection.ShowDialog();
+
+                    fraudTracker = new FraudTracker
+                    {
+                        Date = DateTime.Now,
+                        DeviceType = target.Class,
+                        SerialNumber = SerialNumber,
+                        PSUTest = fraudInspection.GetResultText()
+                    };
+                    Db.InsertFraudTracker(fraudTracker);
+
+                    LblStatus.Text = "Fraud inspection done, SN='" + SerialNumber + "'";
+                    Tools.FlexLinkChrome.Maximize();
+                }
+                else
+                {
+                    // it is not a target, show message and do nothing...
+                    string msg = string.Format(
+                        "SN {0} is not a target for fraud inspection.",
+                        SerialNumber
+                        );
+
+                    LblStatus.Text = msg;
+                }
                 FraudInspectionDone = true;
+
+
             }
+
             MainTimer.Enabled = true;
         }
 

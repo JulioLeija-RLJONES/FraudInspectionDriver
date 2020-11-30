@@ -29,7 +29,7 @@ namespace RLJones.FraudInspectionDriver.Forms
             {
                 // use this when debugging only for rapid access
                 TxtEmail.Text = "j.leija@babinc.com";
-                TxtPassword.Text = "Nirvana2#";
+                TxtPassword.Text = "Flex.321";
             }
             Text = "RL Jones | Fraud Inspection Driver " + LblProductVersion.Text;
         }
@@ -85,25 +85,25 @@ namespace RLJones.FraudInspectionDriver.Forms
                 Tools.FlexLinkChrome.Maximize();
                 Tools.FlexLinkChrome.Navigate("https://flexlinkmicrosoft.flex.com/#/");
 
-                var username = Tools.FlexLinkChrome.WaitForElementById("okta-signin-username", 5);
+                var username = Tools.FlexLinkChrome.WaitForElementById("okta-signin-username", 10);
 
                 if (username != null)
                     username.SendKeys(TxtEmail.Text);
 
-                var password = Tools.FlexLinkChrome.WaitForElementById("okta-signin-password", 5);
+                var password = Tools.FlexLinkChrome.WaitForElementById("okta-signin-password", 10);
 
                 if (password != null)
                     password.SendKeys(TxtPassword.Text);
 
                 if(username != null && password != null)
                 {
-                    var loginButton = Tools.FlexLinkChrome.WaitForElementById("okta-signin-submit", 5);
+                    var loginButton = Tools.FlexLinkChrome.WaitForElementById("okta-signin-submit", 10);
 
                     if (loginButton != null)
                     {
                         loginButton.Click();
 
-                        var welcomeMessage = Tools.FlexLinkChrome.WaitForElementById("ddlUser", 10);
+                        var welcomeMessage = Tools.FlexLinkChrome.WaitForElementById("ddlUser", 20);
                         loggedIn = welcomeMessage != null;
                     }
                 }
